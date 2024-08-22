@@ -46,5 +46,5 @@ int main (){
   start = time(NULL);
   pie =  parallel_pie();
   end = time(NULL);
-  printf("Serial\nPie = %.10f\nTime = %.3f sec\n",pie, (double)difftime(end,start));
+  printf("Parallel\nPie = %.10f\nTime = %.3f sec\n",pie, (double)difftime(end,start));
 }
