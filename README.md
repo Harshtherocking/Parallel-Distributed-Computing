@@ -162,6 +162,7 @@ int main (){
 
 }
 ```
+```
 Serial Bubble sort took : 16.00000 sec
-Parallel Bubble sort took : 4.00000 sec``
+Parallel Bubble sort took : 4.00000 sec
 ```
