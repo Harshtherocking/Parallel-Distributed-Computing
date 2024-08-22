@@ -168,6 +168,7 @@ Parallel Bubble sort took : 4.00000 sec
 ```
 
 ---
+### Pie Calculation
 ```c
 #include <stdio.h>
 #include <omp.h>
