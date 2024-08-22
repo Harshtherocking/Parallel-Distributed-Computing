@@ -1,9 +1,15 @@
 #include <omp.h>
-#include  <stdlib.h>
+#include <stdlib.h>
 #include <stdio.h> 
 #include <time.h>
+#include <string.h>
 
 #define NT 16
+
+void print_array (int * arr, int arr_len) {
+  for (int i=0; i<arr_len; i++) printf("%d ", arr[i]);
+  printf("\n");
+}
 
 void swap (int * a, int *b){
   int temp = *a;
@@ -17,7 +23,6 @@ void merge (int * arr1, int* arr2, int size1, int size2){
   int r=0;
 
   while (l<size1 && r<size2){
-
     if (arr1[l] > arr2[r]){
       int temp = arr2[r];
       arr2[r] = arr1[size1-1];
@@ -31,7 +36,6 @@ void merge (int * arr1, int* arr2, int size1, int size2){
       size1 ++;
       r++;
     }
-
     l++;
   }
 }
@@ -110,7 +114,6 @@ void parallel_bubble_sort (int * arr, int arr_len){
   }
   
 
-
   /*
    * This is platform specific merging code, my CPU supports 16 threads.
    * The algorithm iteratively merge two chunks together resulting in count of sorted array changing from 16->8->4->2->1
@@ -121,7 +124,6 @@ void parallel_bubble_sort (int * arr, int arr_len){
   int num_threads_req = NT/2;
 
   while (num_threads_req && chunk_size < arr_len){
-    // merge step 
     #pragma omp parallel shared(arr, arr_len, num_threads_req, chunk_size)
     {
       merge_thread(omp_get_thread_num(), num_threads_req, arr, arr_len, chunk_size);
@@ -136,18 +138,24 @@ void parallel_bubble_sort (int * arr, int arr_len){
 
 int main (){
   // initialising array
-  int arr_len = 100;
+  int arr_len = 100000;
   int * arr = (int*)malloc(sizeof(int) * arr_len);
-
   // filling up array in decreasing order
   for (int i=0; i<arr_len; i++) arr[arr_len-i-1] =i+1;
-  
 
-  for (int i=0; i<arr_len; i++) printf("%d ",arr[i]);
-  printf("\n");
-  printf("\n");
+  int * arr_ = (int*) malloc (sizeof(int) * arr_len);
+  memcpy(arr_, arr, sizeof(int) * arr_len);
 
-  parallel_bubble_sort(arr, arr_len);
+  // serial sort
+  time_t start_time = time(NULL);
+  bubble_sort(arr, arr_len);
+  time_t end_time = time(NULL);
+  printf("Serial Bubble sort took : %.5f sec\n", (double)  difftime(end_time, start_time));
 
-  for (int i=0; i<arr_len; i++) printf("%d ",arr[i]);
+  // parallel sort
+  start_time = time(NULL);
+  parallel_bubble_sort(arr_, arr_len);
+  end_time = time(NULL);
+  printf("Parallel Bubble sort took : %.5f sec\n", (double)  difftime(end_time, start_time));
+
 }
